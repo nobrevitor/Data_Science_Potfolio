@@ -4,7 +4,7 @@
 
 - Vídeo do arquivo Python com o Streamlit contendo os gráficos para análise exploratória: 
 
-[Demonstração](Análise Exploratória.mov)
+![Demonstração](Análise Exploratória.mov)
 
 ---
 
