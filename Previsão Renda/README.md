@@ -24,12 +24,13 @@ https://github.com/user-attachments/assets/98f023a5-5fd7-436f-8454-78d1a6358490
 ### Previsão Renda.ipynb
 
 - Arquivo principal contendo todas as informações do projeto;
-- Análise de dados univariada e bivariada;
-- Limpeza e tratamento de dados;
-- Seleção e transformação de dados;
-- Criação de um modelo de Machine Learning;
-- Treino e teste do modelo;
-- Implementação do modelo;
+- Análise exploratória dos dados (EDA);
+- Limpeza, tratamento e feature engeneering dos dados;
+- Seleção de features com LassoCV e Permutation Importance;
+- Criação de um modelo de Machine Learning com Gradient Boosting Regressor;
+- Treino, teste e avaliação do modelo;
+- Possível implementação do modelo;
+- Conclusão;
 
 ---
  
