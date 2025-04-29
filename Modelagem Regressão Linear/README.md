@@ -1,4 +1,4 @@
-# Previsão de renda
+# Modelagem Regressão Linear
 
 ### Input:
 
