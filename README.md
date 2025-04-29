@@ -21,7 +21,7 @@ Realizado utilizando Python e as suas bibliotecas de dados como Pandas, Seaborn,
 
 ---
 
-## Projeto Árvore de Regressão:
+## Árvore de Regressão:
 
 Este projeto tem como objetivo prever o preço das casas com base nas features fornecidas. Realizado utilizando:
 
