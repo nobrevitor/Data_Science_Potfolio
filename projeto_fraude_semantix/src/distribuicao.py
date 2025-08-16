@@ -1,0 +1,151 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+
+def univariada(df, var: str):
+    """
+    Plota a distribuição de uma variável do DataFrame, diferenciando o tipo (numérica ou categórica)
+    e o número de categorias, oferecendo visualizações adaptadas para melhor análise exploratória.
+
+    Comportamento:
+
+    1. Variáveis numéricas:
+       - Exibe um boxplot na parte superior para identificar outliers e distribuição geral.
+       - Exibe um histograma com KDE na parte inferior para analisar frequência e forma da distribuição.
+
+    2. Variáveis categóricas:
+       - < 20 categorias: gráfico de barras vertical com rótulos de contagem em cada barra.
+       - 20 a 30 categorias: gráfico de barras horizontal ordenado, com rótulos de contagem ao lado.
+       - > 30 categorias: seleciona 5 categorias representativas 
+         (máxima, intermediário alto, mediana, intermediário baixo e mínima) e plota gráfico de barras vertical
+         mostrando a contagem apenas dessas categorias, com rótulos.
+
+    Parâmetros:
+    -----------
+    df : pd.DataFrame
+        DataFrame contendo os dados.
+    var : str
+        Nome da variável a ser analisada.
+
+    Observações:
+    -------------
+    - Valores nulos são ignorados na análise.
+    - Para variáveis categóricas com muitas categorias, a seleção das 5 categorias representativas
+      permite visualizar rapidamente os extremos e a mediana sem sobrecarregar o gráfico.
+    - As cores são definidas de forma padronizada para manter consistência visual entre gráficos.
+    - Labels de contagem são adicionadas automaticamente em todas as barras visíveis.
+
+    Exemplo de uso:
+    ---------------
+    >>> import pandas as pd
+    >>> from distribucao import univariada
+    >>> df = pd.read_csv("dados.csv")
+    >>> univariada(df, "idade")
+    >>> univariada(df, "categoria_produto")
+    """
+    serie = df[var].dropna()
+    plt.style.use('seaborn-v0_8-whitegrid')
+    
+    if pd.api.types.is_numeric_dtype(serie):
+        fig, ax = plt.subplots(2, 1, figsize=(10, 6), gridspec_kw={'height_ratios': [1, 3]}, sharex=True)
+        
+        cor = sns.color_palette('crest')[2]
+        
+        sns.boxplot(x=serie, ax=ax[0], color=cor)
+        ax[0].set(xlabel='')
+        ax[0].grid(True, linestyle='--', alpha=0.4)
+
+        sns.histplot(serie, kde=True, ax=ax[1], color=cor)
+        ax[1].set_xlabel(var, labelpad=10)
+        ax[1].set_ylabel('Frequência')
+
+        plt.suptitle(f"Distribuição - {var}", fontsize=14)
+        plt.grid(True, linestyle='--', alpha=0.4)
+        plt.tight_layout()
+        plt.show()
+
+    else:
+        counts = serie.value_counts()
+        n_cats = len(counts)
+
+        if n_cats < 20:
+            plt.figure(figsize=(10, 6))
+            ax = sns.barplot(
+                x=counts.index, 
+                y=counts.values, 
+                hue=counts.index, 
+                palette='viridis', 
+                dodge=False, 
+                legend=False
+            )
+            plt.xlabel(var, labelpad=10)
+            plt.ylabel('Contagem')
+            plt.title(f"Distribuição - {var}")
+            plt.grid(True, linestyle='--', alpha=0.4)
+
+            for p in ax.patches:
+                height = p.get_height()
+                ax.annotate(f'{int(height)}',
+                            (p.get_x() + p.get_width() / 2., height),
+                            ha='center', va='bottom', fontsize=9)
+
+            plt.tight_layout()
+            plt.show()
+
+        elif 20 <= n_cats <= 30:
+            counts_sorted = counts.sort_values(ascending=False)
+            plt.figure(figsize=(10, 8))
+            ax = sns.barplot(
+                y=counts_sorted.index, 
+                x=counts_sorted.values, 
+                hue=counts_sorted.index,
+                palette='viridis', 
+                dodge=False, 
+                legend=False
+            )
+            plt.xlabel('Contagem', labelpad=10)
+            plt.ylabel(var)
+            plt.title(f"Distribuição - {var}")
+            plt.grid(True, linestyle='--', alpha=0.4)
+
+            for p in ax.patches:
+                width = p.get_width()
+                ax.annotate(f'{int(width)}',
+                            (width, p.get_y() + p.get_height() / 2.),
+                            ha='left', va='center', fontsize=9)
+
+            plt.tight_layout()
+            plt.show()
+
+        else:
+            sorted_counts = counts.sort_values(ascending=False)
+            max_cat = sorted_counts.index[0]
+            median_cat = sorted_counts.index[n_cats // 2]
+            min_cat = sorted_counts.index[-1]
+            mid_high_cat = sorted_counts.index[n_cats // 4]
+            mid_low_cat = sorted_counts.index[3 * n_cats // 4]
+
+            selected_cats = [max_cat, mid_high_cat, median_cat, mid_low_cat, min_cat]
+            selected_counts = sorted_counts[selected_cats]
+
+            plt.figure(figsize=(10, 6))
+            ax = sns.barplot(
+            x=selected_counts.index, 
+            y=selected_counts.values, 
+            hue=selected_counts.index, 
+            palette='viridis', 
+            dodge=False, 
+            legend=False
+            )
+            plt.xlabel(var, labelpad=10)
+            plt.ylabel('Contagem')
+            plt.grid(True, linestyle='--', alpha=0.4)
+            plt.title(f"Distribuição (5 categorias representativas) - {var}")
+            for p in ax.patches:
+                height = p.get_height()
+                ax.annotate(f'{int(height)}',
+                            (p.get_x() + p.get_width() / 2., height),
+                            ha='center', va='bottom', fontsize=9)
+            plt.tight_layout()
+            plt.show()
