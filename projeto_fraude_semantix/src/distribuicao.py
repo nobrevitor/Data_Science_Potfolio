@@ -3,7 +3,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-def univariada(df, var: str):
+def univariada(df, var: str, target=None):
     """
     Plota a distribuição de uma variável do DataFrame, diferenciando o tipo (numérica ou categórica)
     e o número de categorias, oferecendo visualizações adaptadas para melhor análise exploratória.
@@ -21,12 +21,19 @@ def univariada(df, var: str):
          (máxima, intermediário alto, mediana, intermediário baixo e mínima) e plota gráfico de barras vertical
          mostrando a contagem apenas dessas categorias, com rótulos.
 
+    3. Target (opcional):
+       - Se fornecido:
+         * Numéricas: exibe a média da variável para cada classe do target.
+         * Categóricas: exibe a proporção do target em cada categoria (em %).
+
     Parâmetros:
     -----------
     df : pd.DataFrame
         DataFrame contendo os dados.
     var : str
         Nome da variável a ser analisada.
+    target : str, opcional
+        Nome da variável target binária (ex.: "Is_Fraud"). Se fornecida, exibe proporções junto ao gráfico.
 
     Observações:
     -------------
@@ -38,13 +45,12 @@ def univariada(df, var: str):
 
     Exemplo de uso:
     ---------------
-    >>> import pandas as pd
-    >>> from distribucao import univariada
-    >>> df = pd.read_csv("dados.csv")
     >>> univariada(df, "idade")
-    >>> univariada(df, "categoria_produto")
+    >>> univariada(df, "categoria_produto", target="Is_Fraud")
     """
+    
     serie = df[var].dropna()
+    df_temp = df.copy()
     plt.style.use('seaborn-v0_8-whitegrid')
     
     if pd.api.types.is_numeric_dtype(serie):
@@ -64,6 +70,11 @@ def univariada(df, var: str):
         plt.grid(True, linestyle='--', alpha=0.4)
         plt.tight_layout()
         plt.show()
+
+        if target is not None:
+            df_temp[target] = df_temp[target].map({1: 'Fraude', 0: 'Genuina'})
+            medio = df_temp.groupby(target)[var].mean().reset_index(name=f'media_{var}')
+            print(medio.round(2))
 
     else:
         counts = serie.value_counts()
@@ -92,6 +103,14 @@ def univariada(df, var: str):
 
             plt.tight_layout()
             plt.show()
+            
+            if target is not None:
+                prop = df.groupby([var, target]).size().unstack(fill_value=0)
+                prop.columns = ['Genuina', 'Fraude']
+                prop_percentual = prop.div(prop.sum(axis=1), axis=0)
+                prop_formatado = prop_percentual.map(lambda x: f'{x:.2%}')
+
+                print(prop_formatado.sort_values(by='Fraude', ascending=False))
 
         elif 20 <= n_cats <= 30:
             counts_sorted = counts.sort_values(ascending=False)
@@ -117,6 +136,14 @@ def univariada(df, var: str):
 
             plt.tight_layout()
             plt.show()
+            
+            if target is not None:
+                prop = df.groupby([var, target]).size().unstack(fill_value=0)
+                prop.columns = ['Genuina', 'Fraude']
+                prop_percentual = prop.div(prop.sum(axis=1), axis=0)
+                prop_formatado = prop_percentual.map(lambda x: f'{x:.2%}')
+
+                print(prop_formatado.sort_values(by='Fraude', ascending=False))
 
         else:
             sorted_counts = counts.sort_values(ascending=False)
@@ -128,6 +155,7 @@ def univariada(df, var: str):
 
             selected_cats = [max_cat, mid_high_cat, median_cat, mid_low_cat, min_cat]
             selected_counts = sorted_counts[selected_cats]
+            df_filtrado = df[df[var].isin(selected_cats)]
 
             plt.figure(figsize=(10, 6))
             ax = sns.barplot(
@@ -149,3 +177,11 @@ def univariada(df, var: str):
                             ha='center', va='bottom', fontsize=9)
             plt.tight_layout()
             plt.show()
+            
+            if target is not None:
+                prop = df_filtrado.groupby([var, target]).size().unstack(fill_value=0)
+                prop.columns = ['Genuina', 'Fraude']
+                prop_percentual = prop.div(prop.sum(axis=1), axis=0)
+                prop_formatado = prop_percentual.map(lambda x: f'{x:.2%}')
+
+                print(prop_formatado.sort_values(by='Fraude', ascending=False))
