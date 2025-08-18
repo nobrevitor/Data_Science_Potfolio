@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
 def univariada(df, var: str, target=None):
     """
@@ -74,6 +76,7 @@ def univariada(df, var: str, target=None):
         if target is not None:
             df_temp[target] = df_temp[target].map({1: 'Fraude', 0: 'Genuina'})
             medio = df_temp.groupby(target)[var].mean().reset_index(name=f'media_{var}')
+            medio = medio.set_index(target)
             print(medio.round(2))
 
     else:
@@ -112,7 +115,7 @@ def univariada(df, var: str, target=None):
 
                 print(prop_formatado.sort_values(by='Fraude', ascending=False))
 
-        elif 20 <= n_cats <= 30:
+        elif 20 <= n_cats <= 31:
             counts_sorted = counts.sort_values(ascending=False)
             plt.figure(figsize=(10, 8))
             ax = sns.barplot(
@@ -185,3 +188,77 @@ def univariada(df, var: str, target=None):
                 prop_formatado = prop_percentual.map(lambda x: f'{x:.2%}')
 
                 print(prop_formatado.sort_values(by='Fraude', ascending=False))
+
+def estabilidade_tempo(df, var, date_col, freq='D'):
+    '''
+    Plota a estabilidade de uma variável ao longo do tempo.
+
+    Parâmetros:
+    -----------
+    df : pd.DataFrame
+        DataFrame original.
+    var : str
+        Nome da variável a ser analisada.
+    date_col : str
+        Nome da coluna de datas.
+    freq : str, opcional
+        Frequência de agregação ('D' - dia, 'W' - semana, 'M' - mês). Default é diário.
+
+    Observações:
+    -------------
+    - O DataFrame original não é alterado.
+    - A função converte a coluna de datas para datetime se necessário.
+    - Para variáveis binárias, o gráfico mostra proporção (%) e o eixo y é ajustado.
+    '''
+
+    df_aux = df[[var, date_col]].copy()
+
+    if not pd.api.types.is_datetime64_any_dtype(df_aux[date_col]):
+        df_aux[date_col] = pd.to_datetime(df_aux[date_col], errors='coerce')
+
+    is_binary = df_aux[var].nunique() == 2
+
+    df_time = df_aux.groupby(pd.Grouper(key=date_col, freq=freq))[var].mean().reset_index()
+
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(data=df_time, x=date_col, y=var, marker='o')
+
+    if is_binary:
+        plt.ylabel(f'Proporção de {var}')
+        plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{y:.0%}'))
+        plt.ylim(0, df_time[var].max() * 1.1) 
+    else:
+        plt.ylabel(f'Média de {var}')
+
+    plt.title(f'Estabilidade de {var} ao longo do tempo')
+    plt.xlabel('Tempo')
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.show()
+
+
+def correlacao(df):
+    """
+    Aplica LabelEncoder nas variáveis categóricas e plota um heatmap de correlação.
+    
+    Parâmetros:
+    -----------
+    df : pd.DataFrame
+        DataFrame com variáveis numéricas e categóricas.
+    """
+    
+    df_encoded = df.copy()
+    
+    for col in df_encoded.select_dtypes(include=['object', 'category']).columns:
+        le = LabelEncoder()
+        df_encoded[col] = le.fit_transform(df_encoded[col].astype(str))
+    
+    corr = df_encoded.corr()
+    
+    plt.figure(figsize=(16,12))
+    sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm', square=True, cbar_kws={'label':'Correlação'})
+    plt.title('Mapa de Correlação - Variáveis Numéricas e Categóricas Codificadas', fontsize=16)
+    plt.xticks(rotation=45)
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    plt.show()
