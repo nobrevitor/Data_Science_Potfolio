@@ -3,7 +3,7 @@ from matplotlib.ticker import FuncFormatter
 import seaborn as sns
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
+from feature_engine.encoding import CountFrequencyEncoder
 
 def univariada(df, var: str, target=None):
     """
@@ -56,29 +56,66 @@ def univariada(df, var: str, target=None):
     plt.style.use('seaborn-v0_8-whitegrid')
     
     if pd.api.types.is_numeric_dtype(serie):
-        fig, ax = plt.subplots(2, 1, figsize=(10, 6), gridspec_kw={'height_ratios': [1, 3]}, sharex=True)
+        if serie.nunique() > 2:
+            fig, ax = plt.subplots(2, 1, figsize=(10, 6), gridspec_kw={'height_ratios': [1, 3]}, sharex=True)
+            
+            discrete = True if 4 < serie.nunique() < 15 else False
+            kde = False if discrete == True else True
+            
+            cor = sns.color_palette('crest')[2]
+            
+            sns.boxplot(x=serie, ax=ax[0], color=cor)
+            ax[0].set(xlabel='')
+            ax[0].grid(True, linestyle='--', alpha=0.4)
+
+            sns.histplot(serie, kde=kde, ax=ax[1], color=cor, discrete=discrete)
+            ax[1].set_xlabel(var, labelpad=10)
+            ax[1].set_ylabel('Frequência')
+
+            plt.suptitle(f"Distribuição - {var}", fontsize=14)
+            plt.grid(True, linestyle='--', alpha=0.4)
+            plt.tight_layout()
+            plt.show()
         
-        cor = sns.color_palette('crest')[2]
-        
-        sns.boxplot(x=serie, ax=ax[0], color=cor)
-        ax[0].set(xlabel='')
-        ax[0].grid(True, linestyle='--', alpha=0.4)
+            if target is not None:
+                df_temp[target] = df_temp[target].map({1: 'Fraude', 0: 'Genuina'})
+                medio = df_temp.groupby(target)[var].mean().reset_index(name=f'media_{var}')
+                medio = medio.set_index(target)
+                print(medio.round(2))
 
-        sns.histplot(serie, kde=True, ax=ax[1], color=cor)
-        ax[1].set_xlabel(var, labelpad=10)
-        ax[1].set_ylabel('Frequência')
+        else:
+            counts = df[var].value_counts().sort_index()
+            
+            plt.figure(figsize=(10,6))
+            ax = sns.barplot(
+                    x=counts.index, 
+                    y=counts.values, 
+                    hue=counts.index, 
+                    palette='viridis', 
+                    dodge=False, 
+                    legend=False
+                )
+            plt.xlabel(var, labelpad=10)
+            plt.ylabel('Contagem')
+            plt.title(f"Distribuição - {var}")
+            plt.grid(True, linestyle='--', alpha=0.4)
 
-        plt.suptitle(f"Distribuição - {var}", fontsize=14)
-        plt.grid(True, linestyle='--', alpha=0.4)
-        plt.tight_layout()
-        plt.show()
+            for p in ax.patches: 
+                height = p.get_height()
+                ax.annotate(f'{int(height)}',
+                            (p.get_x() + p.get_width() / 2., height),
+                            ha='center', va='bottom', fontsize=9)
 
-        if target is not None:
-            df_temp[target] = df_temp[target].map({1: 'Fraude', 0: 'Genuina'})
-            medio = df_temp.groupby(target)[var].mean().reset_index(name=f'media_{var}')
-            medio = medio.set_index(target)
-            print(medio.round(2))
+            plt.tight_layout()
+            plt.show()
+            
+            if target is not None:
+                prop = df.groupby([var, target]).size().unstack(fill_value=0)
+                prop.columns = ['Genuina', 'Fraude']
+                prop_percentual = prop.div(prop.sum(axis=1), axis=0)
+                prop_formatado = prop_percentual.map(lambda x: f'{x:.2%}')
 
+                print(prop_formatado.sort_values(by='Fraude', ascending=False))
     else:
         counts = serie.value_counts()
         n_cats = len(counts)
@@ -98,7 +135,7 @@ def univariada(df, var: str, target=None):
             plt.title(f"Distribuição - {var}")
             plt.grid(True, linestyle='--', alpha=0.4)
 
-            for p in ax.patches:
+            for p in ax.patches: 
                 height = p.get_height()
                 ax.annotate(f'{int(height)}',
                             (p.get_x() + p.get_width() / 2., height),
@@ -202,7 +239,7 @@ def estabilidade_tempo(df, var, date_col, freq='D'):
     date_col : str
         Nome da coluna de datas.
     freq : str, opcional
-        Frequência de agregação ('D' - dia, 'W' - semana, 'M' - mês). Default é diário.
+        Frequência de agregação ('D' - dia, 'W' - semana, 'ME' - mês). Default é diário.
 
     Observações:
     -------------
@@ -237,28 +274,160 @@ def estabilidade_tempo(df, var, date_col, freq='D'):
     plt.show()
 
 
-def correlacao(df):
+def correlacao(df, target):
     """
-    Aplica LabelEncoder nas variáveis categóricas e plota um heatmap de correlação.
-    
+    Aplica CountFrequencyEncoder nas variáveis categóricas e plota um heatmap de correlação,
+    colocando a variável alvo nos cantos (última coluna/linha).
+
     Parâmetros:
     -----------
     df : pd.DataFrame
         DataFrame com variáveis numéricas e categóricas.
+    target : str
+        Nome da variável alvo.
     """
     
     df_encoded = df.copy()
+    var_cat = df_encoded.select_dtypes(include=['object', 'category']).columns.to_list()
     
-    for col in df_encoded.select_dtypes(include=['object', 'category']).columns:
-        le = LabelEncoder()
-        df_encoded[col] = le.fit_transform(df_encoded[col].astype(str))
+    if len(var_cat) != 0:
     
+        # Seleciona variáveis categóricas
+        var_cat = df_encoded.select_dtypes(include=['object', 'category']).columns.to_list()
+
+        # Codifica as categóricas
+        encoder = CountFrequencyEncoder(encoding_method='frequency',
+                                        variables=var_cat,
+                                        ignore_format=True)
+        df_encoded = encoder.fit_transform(df_encoded)
+
+
+    # Reordena colunas para colocar o target no final
+    cols = [col for col in df_encoded.columns if col != target] + [target]
+    df_encoded = df_encoded[cols]
+    
+    # Calcula correlação
     corr = df_encoded.corr()
     
+    # Plota heatmap
     plt.figure(figsize=(16,12))
     sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm', square=True, cbar_kws={'label':'Correlação'})
     plt.title('Mapa de Correlação - Variáveis Numéricas e Categóricas Codificadas', fontsize=16)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=45, ha='right')
     plt.yticks(rotation=0)
     plt.tight_layout()
     plt.show()
+    
+def WOE(df: pd.DataFrame, feature: str, target: str, top_n: int = 20):
+    '''
+    Plota o WOE por categoria de uma variável.
+    
+    Parâmetros
+    ----------
+    df : DataFrame
+        Base de dados.
+    feature : str
+        Nome da variável que será analisada.
+    target : str
+        Variável alvo binária (0 = evento, 1 = não evento).
+    top_n : int
+        Máximo de categorias a mostrar no gráfico (restante vai para 'Outros').
+    '''
+
+    df_temp = df[[feature, target]].copy()
+
+    if pd.api.types.is_numeric_dtype(df_temp[feature]) and df_temp[feature].nunique() > 10:
+        try:
+            df_temp[feature] = pd.qcut(df_temp[feature], q=10, duplicates='drop')
+        except:
+            df_temp[feature] = pd.cut(df_temp[feature], bins=10)
+
+    tab = pd.crosstab(df_temp[feature], df_temp[target])
+    tab = tab + 0.0001
+
+    pct_evento = tab[0] / tab[0].sum()
+    pct_nao_evento = tab[1] / tab[1].sum()
+
+    woe = np.log(pct_evento / pct_nao_evento)
+    woe_df = woe.reset_index()
+    woe_df.columns = [feature, 'WOE']
+
+    woe_df = woe_df.reindex(woe_df.WOE.abs().sort_values(ascending=False).index)
+
+    if len(woe_df) > top_n:
+        top = woe_df.iloc[:top_n]
+        resto = pd.DataFrame({
+            feature: ['Outros'],
+            'WOE': [woe_df.iloc[top_n:]['WOE'].mean()]
+        })
+        woe_df = pd.concat([top, resto])
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(woe_df[feature].astype(str), woe_df['WOE'], color=sns.color_palette('crest')[2], edgecolor=None)
+    plt.axvline(0, color='red', linestyle='--')
+    plt.title(f'WOE por categoria - {feature}', fontsize=14)
+    plt.xlabel('WOE', fontsize=12)
+    plt.ylabel('Categoria', fontsize=12)
+    plt.gca().invert_yaxis()
+    plt.grid(True, linestyle='--', alpha=0.4)
+    plt.tight_layout()
+    plt.show()
+    
+def IV(df: pd.DataFrame, target: str, limiar_qcut=10) -> pd.DataFrame:
+    '''
+    Calcula o Information Value (IV) das variáveis explicativas em relação a uma variável target binária.
+
+    O Information Value é uma métrica usada para medir a capacidade preditiva de uma variável explicativa 
+    em problemas de classificação binária, sendo muito utilizada em análise de crédito e modelagem de risco.
+
+    Parâmetros:
+    - df (pd.DataFrame): DataFrame contendo os dados das variáveis explicativas e target.
+    - target (str): Nome da variável target binária (deve conter apenas duas classes).
+    - limiar_qcut (10, opcional): Limiar para categorização de variáveis com mais de 10 valores únicos (padrão: 10).
+    
+    Descrição:
+    - Recebe um DataFrame com as variáveis explicativas (`df`) e a variável target binária (`target`).
+    - Se a variável explicativa for numérica e possuir mais de 10 valores únicos, ela é categorizada em 10 bins por quantis.
+    - Calcula a tabela cruzada de frequências entre as categorias de `feature` e as classes de `target`.
+    - Aplica um ajuste para evitar divisão por zero somando 0.00001 às frequências.
+    - Calcula o Weight of Evidence (WoE) para cada categoria.
+    - Calcula e retorna o Information Value (IV) agregando o impacto das categorias.
+
+    Retorno:
+    - pd.DataFrame: Contendo o valor do Information Value para cada variável explicativa do DataFrame.
+
+    Observações:
+    - A variável target deve ser binária, com duas classes distintas.
+    - A discretização é feita automaticamente para variáveis numéricas com mais de 10 valores únicos,
+      mas pode ser ajustada conforme a necessidade.
+    '''
+    results = []
+    for feature in df.drop(columns=[target]).columns:
+        df_temp = df[[feature, target]].copy()
+
+        if pd.api.types.is_numeric_dtype(df_temp[feature]):
+            num_unique = df_temp[feature].nunique()
+        
+            if num_unique > limiar_qcut:
+                try:
+                    df_temp[feature] = pd.qcut(df_temp[feature], q=10, duplicates='drop')
+                except:
+                    pass
+        
+        tab = pd.crosstab(df_temp[feature], df_temp[target])
+        tab = tab + 0.0001
+
+        col_evento, col_nao_evento = tab.columns[1], tab.columns[0]
+
+        pct_evento = tab[col_evento] / tab[col_evento].sum()
+        pct_nao_evento = tab[col_nao_evento] / tab[col_nao_evento].sum()
+
+        woe = np.log(pct_evento / pct_nao_evento)
+        iv = np.sum((pct_evento - pct_nao_evento) * woe)
+        
+        results.append({
+            'Variavel': feature,
+            'IV': iv.round(4)
+        })
+
+    return pd.DataFrame(results).sort_values(by='IV', ascending=False).reset_index(drop=True)
