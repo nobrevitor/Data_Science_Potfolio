@@ -1,0 +1,9 @@
+feature-engine==1.8.3
+imbalanced-learn==0.14.0
+matplotlib==3.10.5
+numpy==1.25.2
+pandas==2.3.2
+scikit-learn==1.7.1
+seaborn==0.13.2
+shap==0.48.0
+xgboost==2.1.0
