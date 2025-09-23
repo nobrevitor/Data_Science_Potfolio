@@ -1,4 +1,4 @@
-# 🛡️ Detecção de Fraudes em Transações Financeiras  
+#  Detecção de Fraudes em Transações Financeiras  
 
 _Modelo de Machine Learning para identificar transações fraudulentas em tempo real._  
 
@@ -71,3 +71,4 @@ Este projeto tem como objetivo construir um modelo de classificação capaz de d
 ---
 
 ## 🗂 Estrutura do Repositório  
+
