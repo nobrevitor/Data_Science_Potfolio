@@ -1,5 +1,14 @@
 #  Detecção de Fraudes em Transações Financeiras  
 
+[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python)](https://www.python.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas)](https://pandas.pydata.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-Numerical%20Computing-013243?logo=numpy)](https://numpy.org/)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557c?logo=plotly)](https://matplotlib.org/)
+[![Seaborn](https://img.shields.io/badge/Seaborn-Visualization-4C72B0)](https://seaborn.pydata.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-F7931E?logo=scikit-learn)](https://scikit-learn.org/stable/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Gradient%20Boosting-EB5E00)](https://xgboost.ai/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-App%20Demo-FF4B4B?logo=streamlit)](https://streamlit.io/)
+
 _Modelo de Machine Learning para identificar transações fraudulentas em tempo real._  
 
 ---
@@ -52,23 +61,28 @@ Este projeto tem como objetivo construir um modelo de classificação capaz de d
 ---
 
 ## 📈 Resultados  
-- O modelo XGBoost apresentou o melhor equilíbrio entre **recall** e **precisão**.  
+- O modelo XGBoost apresentou o melhor equilíbrio entre **recall** e **precisão**.
+- Após o tunning o modelo passou a detectar mais fraudes e reduziu o valor de falsos negativos.
+- Resultados das métricas:
+  - Classification Report:
+
+              precision    recall  f1-score   support
+
+             0      0.83      0.88      0.86      7602
+             1      0.72      0.63      0.67      3636
+
+   accuracy                             0.80     11238
+   macro avg        0.78      0.76      0.76     11238
+   weighted avg     0.80      0.80      0.80     11238
+
+ROC-AUC: 0.7915
+Log Loss: 0.4485  
 - Principais insights:  
-  - Transações em horários incomuns apresentam maior chance de fraude.  
-  - Localizações divergentes entre compras sucessivas são fortes indícios suspeitos.  
-
-*(Insira aqui gráficos salvos em `images/` para ilustrar resultados e métricas)*  
-
----
-
-## ✅ Conclusões e Próximos Passos  
-- O modelo é aplicável em sistemas de monitoramento de transações financeiras.  
-- Próximos passos:  
-  - Implantar em **API** para predição em tempo real.  
-  - Reduzir ainda mais os **falsos positivos**.  
-  - Explorar modelos de **deep learning** para padrões complexos.  
+  - Número maior de transações falhas sugerem maior risco de fraude.  
+  - Apesar dos riscos associados ao uso de caixas eletrônicos (ATMs) e de dispositivos eletrônicos com baixa segurança, o maior fator de vulnerabilidade está no comportamento do próprio usuário, que muitas vezes acaba criando brechas em qualquer sistema de proteção.
 
 ---
 
 ## 🗂 Estrutura do Repositório  
+
 
