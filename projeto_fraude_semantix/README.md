@@ -85,6 +85,11 @@ Este projeto tem como objetivo construir um modelo de classificação capaz de d
 
 └── README.md  `Este arquivo`
 
+## 💻 Aplicação Interativa
+
+[streamlit.webm](https://github.com/user-attachments/assets/d1e799de-35b2-4a91-b0f8-154edfb8a251)
+
+
 ## ⚙️ Tecnologias Utilizadas
 - **Python 3.11**
 - **Pandas / NumPy** para manipulação e análise de dados  
@@ -99,3 +104,4 @@ Este projeto tem como objetivo construir um modelo de classificação capaz de d
 **Vitor Nobre**
 
 🔗 [LinkedIn](https://www.linkedin.com/in/vitor-nobre-silva/)
+
