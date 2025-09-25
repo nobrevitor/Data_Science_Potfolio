@@ -1,13 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, precision_recall_curve, roc_auc_score, log_loss
 import matplotlib.pyplot as plt
-from feature_engine.encoding import CountFrequencyEncoder
-import xgboost as xgb
+
 import pickle
 import os
+
+from feature_engine.encoding import CountFrequencyEncoder
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, precision_recall_curve, roc_auc_score, log_loss
 
 # ==============================
 # Funções auxiliares
