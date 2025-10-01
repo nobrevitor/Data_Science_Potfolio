@@ -1,32 +1,85 @@
-# Data Science Potfolio
-Portfólio de projetos de Data Science
-## Previsão de renda:
-Neste projeto, foi desenvolvida uma solução de machine learning para prever a renda de clientes. Desenvolvi o projeto utilizando técnicas avançadas de Ciência de Dados. Seguindo os seguintes passos:
+# 📊 Data Science Portfolio
+
+Portfólio de projetos desenvolvidos em Ciência de Dados, Machine Learning e Estatística, com aplicações práticas em diferentes contextos de previsão e análise de dados.
+
+---
+
+## 🔍 Detecção de Fraudes em Transações Financeiras
+
+📌 **Descrição:**
+
+Com o aumento das transações digitais, a segurança financeira tornou-se essencial. Neste projeto, desenvolvi um modelo de classificação de fraudes para identificar transações suspeitas em tempo real, utilizando técnicas de análise estatística e machine learning.
+
+📌 **Principais etapas:**
+
+- Análise exploratória para identificar padrões de fraude.
+- Engenharia de variáveis, como taxa de transações falhas e perfis de autenticação.
+- Criação e avaliação de modelos de classificação (XGBoost e RandonForest).
+- Métricas utilizadas: ROC-AUC, Precision, Recall e Log Loss.
+- Geração de insights para reforçar a segurança de clientes e instituições.
+
+📌 **Impacto:**
+O modelo oferece suporte à detecção precoce de fraudes e auxilia na redução de perdas financeiras, contribuindo para sistemas mais seguros.
+
+---
+
+## 💰 Previsão de Renda
+
+📌 **Descrição:**
+
+Desenvolvi um modelo preditivo para estimar a renda de clientes, aplicando machine learning supervisionado e técnicas de seleção de variáveis.
+
+📌 **Principais etapas:**
 
 - Análise exploratória e descritiva dos dados (EDA).
-- Tratamento de missing values e outliers por capping (IQR) e transformação logarítmica de variáveis.
+- Tratamento de missing values e outliers (capping pelo IQR e log-transformação).
 - Seleção de variáveis via LassoCV e Permutation Importance.
-- Construção e otimização do modelo Gradient Boosting Regressor com Optuna.
-- Avaliação de desempenho baseada em RMSE, MAE, e R² , com deslogarização para interpretação final.
-- Utilização de Python, Scikit-Learn, ScyPy, Optuna, Matplotlib, Seaborn, Pandas, Numpy e técnicas de ensemble e machine learning supervisionado.
-- O modelo final apresentou desempenho satisfatório tanto nos dados de treino quanto de teste, com métricas sólidas de RMSE, MAE e R².
+- Modelagem com Gradient Boosting Regressor, otimizado com Optuna.
+- Avaliação com RMSE, MAE e R², incluindo deslogarização para interpretação.
+
+📌 **Ferramentas:** Python, Pandas, NumPy, Scikit-Learn, SciPy, Matplotlib, Seaborn, Optuna.
 
 ---
 
-## Modelagem Regressão linear:
+## 📊 Modelagem de Regressão Linear
 
-Este projeto tem como objetivo realizar a análise dos dados e criar um modelo de regressão linear para a previsão de renda. 
+📌 **Descrição:**
 
-Realizado utilizando Python e as suas bibliotecas de dados como Pandas, Seaborn, Numpy e Matplotlib, para a análise exploratória e descritiva dos dados, também o tratamento e seleção dos mesmos para utilização no modelo. Seleção das variáveis significativas com Statmodels, a partir da ferramenta LASSO. Criação do modelo, treino, ajustes, testes e avaliação feitos com o Scikit-Learn.
+Criação de um modelo de regressão linear para previsão de renda, com foco em análise exploratória e seleção de variáveis.
+
+📌 **Principais etapas:**
+
+- EDA e tratamento de dados.
+- Seleção de variáveis significativas com Statmodels (LASSO).
+- Criação, treino, ajuste e avaliação do modelo com Scikit-Learn.
+
+📌 **Ferramentas:** Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-Learn, Statmodels.
 
 ---
 
-## Árvore de Regressão:
+## 🏡 Árvore de Regressão
 
-Este projeto tem como objetivo prever o preço das casas com base nas features fornecidas. Realizado utilizando:
+📌 **Descrição:**
 
-- Python e biblioteca de dados Pandas, Seaborn e Matplotlib;
-- Scikit-Learn para a modelagem de dados;
-- Ajustes da árvore a partir do melhor ccp_alpha encontrado;
-- Treino, teste e avaliação do modelo com base nas métricas `MSE` e `R²`. 
+Modelo preditivo para estimar o preço de casas com base em variáveis explicativas.
+
+📌 **Principais etapas:**
+
+- EDA com Pandas, Seaborn e Matplotlib.
+- Modelagem com DecisionTreeRegressor (Scikit-Learn).
+- Ajustes com base no melhor ccp_alpha (pruning).
+- Avaliação com métricas MSE e R².
+
+📌 **Ferramentas:** Python, Pandas, Matplotlib, Seaborn, Scikit-Learn.
+
 ---
+
+## 🛠️ Tecnologias Utilizadas
+
+**Linguagens:** Python, SQL
+
+**Bibliotecas:** Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn, SciPy, XGBoost, Optuna, Statmodels, Imbalanced-Learn, Shap, Feature-Engine
+
+**Ferramentas:** Jupyter Notebook, Streamlit, Power BI, PostgreSQL, Git/GitHub
+
+**Áreas:** Ciência de Dados, Machine Learning, Estatística, Modelagem Preditiva, Análise Exploratória de Dados
