@@ -21,6 +21,8 @@ Com o aumento das transações digitais, a segurança financeira tornou-se essen
 📌 **Impacto:**
 O modelo oferece suporte à detecção precoce de fraudes e auxilia na redução de perdas financeiras, contribuindo para sistemas mais seguros.
 
+📂 **Pasta:** `projeto_fraude_semantix`
+
 ---
 
 ## Previsão de Renda
@@ -39,6 +41,8 @@ Desenvolvi um modelo preditivo para estimar a renda de clientes, aplicando machi
 
 📌 **Ferramentas:** Python, Pandas, NumPy, Scikit-Learn, SciPy, Matplotlib, Seaborn, Optuna.
 
+📂 **Pasta:** `Previsão de Renda`
+
 ---
 
 ## Modelagem de Regressão Linear
@@ -54,6 +58,8 @@ Criação de um modelo de regressão linear para previsão de renda, com foco em
 - Criação, treino, ajuste e avaliação do modelo com Scikit-Learn.
 
 📌 **Ferramentas:** Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-Learn, Statmodels.
+
+📂 **Pasta:** `Modelagem de Regressão Linear`
 
 ---
 
@@ -71,6 +77,8 @@ Modelo preditivo para estimar o preço de casas com base em variáveis explicati
 - Avaliação com métricas MSE e R².
 
 📌 **Ferramentas:** Python, Pandas, Matplotlib, Seaborn, Scikit-Learn.
+
+📂 **Pasta:** `Árvore de Regressão`
 
 ---
 
