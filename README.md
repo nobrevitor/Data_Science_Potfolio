@@ -4,7 +4,7 @@ Portfólio de projetos desenvolvidos em Ciência de Dados, Machine Learning e Es
 
 ---
 
-## 🔍 Detecção de Fraudes em Transações Financeiras
+## Detecção de Fraudes em Transações Financeiras
 
 📌 **Descrição:**
 
@@ -23,7 +23,7 @@ O modelo oferece suporte à detecção precoce de fraudes e auxilia na redução
 
 ---
 
-## 💰 Previsão de Renda
+## Previsão de Renda
 
 📌 **Descrição:**
 
@@ -41,7 +41,7 @@ Desenvolvi um modelo preditivo para estimar a renda de clientes, aplicando machi
 
 ---
 
-## 📊 Modelagem de Regressão Linear
+## Modelagem de Regressão Linear
 
 📌 **Descrição:**
 
@@ -57,7 +57,7 @@ Criação de um modelo de regressão linear para previsão de renda, com foco em
 
 ---
 
-## 🏡 Árvore de Regressão
+## Árvore de Regressão
 
 📌 **Descrição:**
 
